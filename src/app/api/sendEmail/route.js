@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
 import nodemailer from 'nodemailer';
 
-export const OPTIONS = async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Imposta l'origine corretta
-  res.setHeader("Access-Control-Allow-Methods", "OPTIONS, POST"); // Metodi consentiti
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Intestazioni consentite
-  res.end();
-};
+export async function OPTIONS(request) {
+  const allowedOrigin = request.headers.get("origin");
+  const response = new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": allowedOrigin || "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
+      "Access-Control-Max-Age": "86400",
+    },
+  });
+
+  return response;
+}
 
 
 export const POST = async (req, res) => {
