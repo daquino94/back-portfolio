@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import nodemailer from 'nodemailer';
 
+export const OPTIONS = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Imposta l'origine corretta
+  res.setHeader("Access-Control-Allow-Methods", "OPTIONS, POST"); // Metodi consentiti
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type"); // Intestazioni consentite
+  res.end();
+};
+
+
 export const POST = async (req, res) => {
     try {
         const data = await req.json()
@@ -14,6 +22,8 @@ export const POST = async (req, res) => {
               pass: process.env.NEXT_PUBLIC_MAIL_PASSWORD, 
             },
           });
+
+
           const emailHtml = `<!DOCTYPE html>
           <html>
           <head>
@@ -49,9 +59,12 @@ export const POST = async (req, res) => {
           <body>
             <div class="card">
               <h2>Nuovo messaggio dal sito</h2>
+              <p><strong>Nome:</strong> ${data.firstname}</p>
+              <p><strong>Cognome:</strong> ${data.lastname}</p>
               <p><strong>Email:</strong> ${data.email}</p>
-              <p><strong>Messaggio:</strong> ${data.message}</p>
               <p><strong>Telefono:</strong> ${data.phone}}</p>
+              <p><strong>Messaggio:</strong> ${data.message}</p>
+              <p><strong>Privacy:</strong> ${data.privacy}</p>
             </div>
           </body>
           </html>
