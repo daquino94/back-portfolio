@@ -7,7 +7,7 @@ export async function OPTIONS(request) {
   const response = new NextResponse(null, {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": allowedOrigin || "*",
+      "Access-Control-Allow-Origin": allowedOrigin || "https://aquinodaniel.com",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers":
         "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
@@ -22,7 +22,7 @@ export const POST = async (req, res) => {
     try {
         const originHeader = req.headers.get("Origin");
         console.log(originHeader);
-        const allowedOrigins = ["*"]; 
+        const allowedOrigins = ["https://aquinodaniel.com"]; 
         if (!allowedOrigins.includes(originHeader)) {
             return NextResponse.error("Accesso non consentito", { status: 403 });
         }
