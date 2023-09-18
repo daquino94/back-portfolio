@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 
 export async function OPTIONS(request) {
   const allowedOrigin = request.headers.get("origin");
+  console.log("origin: ", allowedOrigin)
   const response = new NextResponse(null, {
     status: 200,
     headers: {
@@ -20,7 +21,8 @@ export async function OPTIONS(request) {
 export const POST = async (req, res) => {
     try {
         const originHeader = req.headers.get("Origin");
-        const allowedOrigins = ["https://aquinodaniel.com"]; 
+        console.log(originHeader);
+        const allowedOrigins = ["https://aquinodaniel.com/*"]; 
         if (!allowedOrigins.includes(originHeader)) {
             return NextResponse.error("Accesso non consentito", { status: 403 });
         }
