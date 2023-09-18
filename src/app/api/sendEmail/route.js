@@ -6,7 +6,7 @@ export async function OPTIONS(request) {
   const response = new NextResponse(null, {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": allowedOrigin || "aquinodaniel.com",
+      "Access-Control-Allow-Origin": allowedOrigin || "https://aquinodaniel.com",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers":
         "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version",
@@ -17,10 +17,15 @@ export async function OPTIONS(request) {
   return response;
 }
 
-
 export const POST = async (req, res) => {
     try {
-        const data = await req.json()
+        const originHeader = req.headers.get("Origin");
+        const allowedOrigins = ["https://aquinodaniel.com"]; 
+        if (!allowedOrigins.includes(originHeader)) {
+            return NextResponse.error("Accesso non consentito", { status: 403 });
+        }
+
+        const data = await req.json();
 
         const transporter = nodemailer.createTransport({
             host: process.env.NEXT_PUBLIC_MAIL_HOST, 
@@ -31,7 +36,6 @@ export const POST = async (req, res) => {
               pass: process.env.NEXT_PUBLIC_MAIL_PASSWORD, 
             },
           });
-
 
           const emailHtml = `<!DOCTYPE html>
           <html>
@@ -71,13 +75,14 @@ export const POST = async (req, res) => {
               <p><strong>Nome:</strong> ${data.firstname}</p>
               <p><strong>Cognome:</strong> ${data.lastname}</p>
               <p><strong>Email:</strong> ${data.email}</p>
-              <p><strong>Telefono:</strong> ${data.phone}}</p>
+              <p><strong>Telefono:</strong> ${data.phone}</p> <!-- Rimuovi una parentesi graffa in eccesso qui -->
               <p><strong>Messaggio:</strong> ${data.message}</p>
               <p><strong>Privacy:</strong> ${data.privacy}</p>
             </div>
           </body>
           </html>
-          `
+          `;
+
           const mailOptions = {
             from: process.env.NEXT_PUBLIC_MAIL_MAIL_FROM,
             to: process.env.NEXT_PUBLIC_MAIL_MAIL_TO, 
@@ -90,8 +95,9 @@ export const POST = async (req, res) => {
     
           console.log('Messaggio inviato:', info.messageId);
 
-        return NextResponse.json({success:true, messageId: info.messageId})
+        return NextResponse.json({ success: true, messageId: info.messageId });
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        return NextResponse.error("Errore interno del server", { status: 500 });
     }
 };
